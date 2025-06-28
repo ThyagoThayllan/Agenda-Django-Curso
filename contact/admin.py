@@ -22,11 +22,13 @@ class ContactAdmin(admin.ModelAdmin):
         'phone',
         'category',
         'created_at',
+        'show',
     )
 
     list_filter = (
         'category',
         'created_at',
+        'show',
     )
 
     list_per_page = 25

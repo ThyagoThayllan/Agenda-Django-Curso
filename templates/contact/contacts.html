@@ -1,21 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="responsive-table">
-        <table class="contacts-table">
-            <caption class="table-caption">Contatos</caption>
-            <thead>
-                <tr class="table-row table-row-header">
-                    <th class="table-header">ID</th>
-                    <th class="table-header">Nome</th>
-                    <th class="table-header">Categoria</th>
-                    <th class="table-header">N. Telefone</th>
-                    <th class="table-header">E-mail</th>
-                    <th class="table-header">Data de Criação</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for contact in contacts %}
+    {% if page_obj %}
+        <div class="responsive-table">
+            <table class="contacts-table">
+                <caption class="table-caption">Contatos</caption>
+                <thead>
+                    <tr class="table-row table-row-header">
+                        <th class="table-header">ID</th>
+                        <th class="table-header">Nome</th>
+                        <th class="table-header">Categoria</th>
+                        <th class="table-header">N. Telefone</th>
+                        <th class="table-header">E-mail</th>
+                        <th class="table-header">Data de Criação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in page_obj %}
                     <tr class="table-row">
                         <td class="table-cel">
                             <a href="{% url 'contact:contact' contact.pk %}">{{ contact.id }}</a>
@@ -24,10 +25,17 @@
                         <td class="table-cel">{{ contact.category.name }}</td>
                         <td class="table-cel">{{ contact.phone }}</td>
                         <td class="table-cel">{{ contact.email }}</td>
-                        <td class="table-cel">{{ contact.created_at }}</td>
+                        <td class="table-cel">{{ contact.created_at|date:'d/m/Y' }}</td>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="single-contact">
+            <h1 class="single-contact-name">Nenhum contato encontrado.</h1>
+        </div>
+    {% endif %}
+
+    {% include 'contact/fragments/pagination.html' %}
 {% endblock content %}

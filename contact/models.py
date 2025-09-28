@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import BooleanField
+from django.db.models import CASCADE
 from django.db.models import CharField
 from django.db.models import DateTimeField
 from django.db.models import EmailField
@@ -13,6 +14,8 @@ from django.db.models import TextField
 class Category(Model):
     name = CharField('Categoria', max_length=50)
 
+    user = ForeignKey(User, on_delete=CASCADE)
+
     class Meta:
         verbose_name = 'Categoria'
 
@@ -24,7 +27,13 @@ class Category(Model):
 
 class Contact(Model):
     category = ForeignKey(
-        Category, blank=True, null=True, on_delete=SET_NULL, verbose_name='Categoria'
+        Category,
+        blank=True,
+        null=True,
+        on_delete=SET_NULL,
+        related_name='contacts',
+        related_query_name='contact',
+        verbose_name='Categoria',
     )
 
     created_at = DateTimeField('Data de Criação', auto_now_add=True)

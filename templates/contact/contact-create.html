@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Criar Contato</h1>
+
+    <div class="form-wrapper">
+
+        <h2>Contact</h2>
+
+        <form
+            action="{% url 'contact:create' %}"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+            {% csrf_token %}
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.phone.label_tag }}
+                    {{ form.phone }}
+                    {{ form.phone.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.category.label_tag }}
+                    {{ form.category }}
+                    {{ form.category.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                    {{ form.description.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    {{ form.image.label_tag }}
+                    {{ form.image }}
+                    {{ form.image.errors }}
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="form-group">
+                    <button class="btn" type="submit">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

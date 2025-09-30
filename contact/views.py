@@ -42,12 +42,9 @@ class ContactUpdate(TemplateView):
         try:
             contact = Contact.objects.get(pk=pk)
         except Contact.DoesNotExist:
-            breakpoint()
-            print('ollaaaaaaaaaaaaaaaaa')
             messages.error(request, f'Contato de ID <b>{pk}</b> não existe. Tente novamente.')
             return redirect('contact:contacts')
 
-        print('ollaaaaaaaaaaaaaaaaa 2222222222')
         action_form = reverse('contact:update', kwargs={'pk': pk})
 
         form = ContactForm(instance=contact)

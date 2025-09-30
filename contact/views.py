@@ -29,7 +29,7 @@ class ContactCreate(TemplateView):
         if form.is_valid():
             contact = Contact.objects.create(**form.cleaned_data)
 
-            return redirect(reverse('contact:update', kwargs={'pk': contact.pk}))
+            return redirect('contact:update', pk=contact.pk)
 
         return render(request, self.template_name, {'form': form})
 

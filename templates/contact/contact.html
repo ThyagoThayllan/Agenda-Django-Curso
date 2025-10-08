@@ -6,12 +6,7 @@
 
         <hr>
         <div style="margin: 2rem 0;">
-            <button style="padding: 0.5rem">
-                <a href="{% url 'contact:contacts' %}">Voltar para a página de inicial</a>
-            </button>
-            <button style="padding: 0.5rem; margin-left: 1rem;">
-                <a href="{% url 'contact:update' contact.pk %}">Editar Contato</a>
-            </button>
+            <a href="{% url 'contact:contacts' %}">Voltar para a página de inicial</a>
         </div>
 
         <p><b>ID:</b> {{ contact.id }}</p>
@@ -20,5 +15,15 @@
         <p><b>Categoria:</b> {{ contact.category.name }}</p>
         <p><b>Descrição:</b> {{ contact.description }}</p>
         <p><b>Data de Criação:</b> {{ contact.created_at }}</p>
+
+        <div class="contact-links">
+            <a class="btn btn-link" href="{% url 'contact:update' contact.pk %}">Update</a>
+            <form action="{% url 'contact:delete' contact.pk %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-link btn-delete" type="submit">
+                    Delete
+                </button>
+            </form>
+        </div>
     </div>
 {% endblock content %}

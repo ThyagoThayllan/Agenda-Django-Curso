@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest
+from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views import View
 from django.views.generic import TemplateView
 
 from contact.forms import ContactForm
@@ -34,6 +37,21 @@ class ContactCreate(TemplateView):
         return render(request, self.template_name, {'form': form})
 
 
+class ContactDelete(View):
+    def post(
+        self, request: HttpRequest, pk: int
+    ) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+        try:
+            contact = Contact.objects.get(pk=pk)
+        except Contact.DoesNotExist:
+            messages.error(request, f'Contato de ID <b>{pk}</b> não existe. Tente novamente.')
+            return redirect('contact:contacts')
+
+        contact.delete()
+
+        return redirect('contact:contacts')
+
+
 class ContactUpdate(TemplateView):
     template_name = 'contact/contact-form.html'
     title = 'Editar Contato'
@@ -59,14 +77,20 @@ class ContactUpdate(TemplateView):
         return render(request, self.template_name, context)
 
     def post(self, request: HttpRequest, pk: int) -> HttpResponse | HttpResponseRedirect:
-        form = ContactForm(data=request.POST)
+        try:
+            contact = Contact.objects.get(pk=pk)
+        except Contact.DoesNotExist:
+            messages.error(request, f'Contato de ID <b>{pk}</b> não existe. Tente novamente.')
+            return redirect('contact:contacts')
 
-        if not form.is_valid():
-            return render(request, self.template_name, {'form': form})
+        form = ContactForm(data=request.POST, instance=contact)
 
-        form.save()
+        if form.is_valid():
+            form.save()
 
-        return redirect('contact:update')
+            return redirect('contact:update', pk=pk)
+
+        return render(request, self.template_name, {'form': form})
 
 
 class ContactView(TemplateView):

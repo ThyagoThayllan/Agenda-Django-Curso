@@ -24,16 +24,39 @@
         <p><b>E-mail:</b> {{ contact.email }}</p>
         <p><b>Categoria:</b> {{ contact.category.name }}</p>
         <p><b>Descrição:</b> {{ contact.description }}</p>
+        {% if contact.owner %}
+            <p>
+                <b>Criador do Contato:</b> {{ contact.owner.first_name }}
+                {{ contact.owner.last_name }}
+            </p>
+        {% endif %}
         <p><b>Data de Criação:</b> {{ contact.created_at }}</p>
 
-        <div class="contact-links">
-            <a class="btn btn-link" href="{% url 'contact:update' contact.pk %}">Update</a>
-            <form action="{% url 'contact:delete' contact.pk %}" method="POST">
-                {% csrf_token %}
-                <button class="btn btn-link btn-delete" type="submit">
-                    Delete
-                </button>
-            </form>
-        </div>
+        {% if user.is_authenticated %}
+            <div class="contact-links">
+                {% if user != contact.owner %}
+                    <a class="btn btn-link disabled" href="#">Update</a>
+                    <button class="btn btn-link btn-delete disabled" disabled type="submit">
+                        Delete
+                    </button>
+                {% else %}
+                    <a class="btn btn-link" href="{% url 'contact:update' contact.pk %}">Update</a>
+                    <form action="{% url 'contact:delete' contact.pk %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-link btn-delete" type="submit">
+                            Delete
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
+
+<script>
+    const blockedFieldsByOwner = document.querySelectorAll('.disabled');
+
+    const notOwnerMessage = 'Apenas o criador do contato pode fazer esta ação.';
+
+    blockedFieldsByOwner.forEach(field => field.setAttribute('title', notOwnerMessage));
+</script>
 {% endblock content %}

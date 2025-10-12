@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
@@ -21,7 +22,7 @@ from contact.forms import UserRegisterForm
 from contact.models import Contact
 
 
-class ContactCreate(TemplateView):
+class ContactCreate(LoginRequiredMixin, TemplateView):
     template_name = 'contact/contact-form.html'
     title = 'Criar Contato'
 
@@ -36,14 +37,16 @@ class ContactCreate(TemplateView):
         form = ContactForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
-            contact = Contact.objects.create(**form.cleaned_data)
+            contact = form.save(commit=False)
+            contact.owner = request.user
+            contact.save()
 
             return redirect('contact:update', pk=contact.pk)
 
         return render(request, self.template_name, {'form': form})
 
 
-class ContactDelete(View):
+class ContactDelete(LoginRequiredMixin, View):
     def post(
         self, request: HttpRequest, pk: int
     ) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
@@ -58,13 +61,13 @@ class ContactDelete(View):
         return redirect('contact:contacts')
 
 
-class ContactUpdate(TemplateView):
+class ContactUpdate(LoginRequiredMixin, TemplateView):
     template_name = 'contact/contact-form.html'
     title = 'Editar Contato'
 
     def get(self, request: HttpRequest, pk: int) -> HttpResponse | HttpResponseRedirect:
         try:
-            contact = Contact.objects.get(pk=pk)
+            contact = Contact.objects.get(owner=request.user, pk=pk)
         except Contact.DoesNotExist:
             messages.error(request, f'Contato de ID <b>{pk}</b> não existe. Tente novamente.')
             return redirect('contact:contacts')
@@ -94,7 +97,7 @@ class ContactUpdate(TemplateView):
         if form.is_valid():
             form.save()
 
-            messages.success(request, 'Usuário atualizado com sucesso.')
+            messages.success(request, 'Contato atualizado com sucesso.')
 
             return redirect('contact:update', pk=pk)
 
@@ -171,29 +174,25 @@ class UserRegister(TemplateView):
         return render(request, self.template_name, {'form': form})
 
 
-class UserUpdate(TemplateView):
+class UserUpdate(LoginRequiredMixin, TemplateView):
     template_name = 'user-update-form.html'
 
-    def get(self, request: HttpRequest, pk: int) -> HttpResponse:
-        user = User.objects.get(pk=pk)
+    def get(self, request: HttpRequest) -> HttpResponse:
+        form = UserForm(instance=request.user)
 
-        form = UserForm(instance=user)
-
-        context = {'form': form, 'user': user}
+        context = {'form': form}
 
         return render(request, self.template_name, context)
 
-    def post(self, request: HttpRequest, pk: int) -> HttpResponse:
-        user = User.objects.get(pk=pk)
-
-        form = UserForm(data=request.POST, instance=user)
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = UserForm(data=request.POST, instance=request.user)
 
         if form.is_valid():
             form.save()
 
             messages.success(request, 'Usuário atualizado com sucesso!')
 
-            return redirect('user-update', pk=pk)
+            return redirect('user-update')
 
         return render(request, self.template_name, {'form': form})
 

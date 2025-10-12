@@ -33,7 +33,7 @@ urlpatterns = [
 
     # User
     path('user/create/', UserRegister.as_view(), name='user-register'),
-    path('user/<int:pk>/update/', UserUpdate.as_view(), name='user-update'),
+    path('user/update/', UserUpdate.as_view(), name='user-update'),
     path('login/', Login.as_view(), name='user-login'),
     path('logout/', Logout.as_view(), name='user-logout'),
 ]

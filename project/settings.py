@@ -139,3 +139,4 @@ except ImportError:
     ...
 
 LOGIN_REDIRECT_URL = 'contact:contacts'
+LOGIN_URL = 'user-login'

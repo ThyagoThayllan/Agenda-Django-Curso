@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import FileInput
+from django.forms import HiddenInput
 from django.forms import ModelForm
 from django.forms import Textarea
 from django.forms import ValidationError
@@ -23,7 +24,8 @@ class ContactForm(ModelForm):
         }
         widgets = {
             'description': Textarea(attrs={'style': 'resize: none'}),
-            'image': FileInput(attrs={'accept': 'image/*'})
+            'image': FileInput(attrs={'accept': 'image/*'}),
+            'owner': HiddenInput(),
         }
 
     def clean(self):

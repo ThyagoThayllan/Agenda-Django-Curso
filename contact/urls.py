@@ -9,6 +9,7 @@ from contact.views import Contacts
 app_name = 'contact'
 
 urlpatterns = [
+    # Contact
     path('', Contacts.as_view(), name='contacts'),
     path('contact/<int:pk>/', ContactView.as_view(), name='contact'),
     path('contact/<int:pk>/delete/', ContactDelete.as_view(), name='delete'),

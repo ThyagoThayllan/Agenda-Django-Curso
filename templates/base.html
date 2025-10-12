@@ -8,10 +8,24 @@
     <title>{{ title }} - Agenda</title>
 </head>
 <body>
-    <header class="header">
+    <header class="header" style="position: relative;">
         <h1 class="header-heading">
             <a class="header-link" href="{% url 'contact:contacts' %}">Agenda</a>
         </h1>
+
+        {% if request.user %}
+            <h3
+                style="color: white; position: absolute; right: 1rem; top: 1rem;"
+            >
+                <a
+                    class="header-profile-link"
+                    href="{% url 'user-update' request.user.pk %}"
+                    style="text-decoration: none;"
+                >
+                    {{ request.user.username }}
+                </a>
+            </h3>
+        {% endif %}
 
         <nav class="menu">
             <ul class="menu-list">
@@ -19,7 +33,10 @@
                     <a class="menu-link" href="{% url 'contact:create' %}">Create</a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="#">Link 2</a>
+                    <a class="menu-link" href="{% url 'user-register' %}">Sign Up</a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{% url 'user-login' %}">Sign In</a>
                 </li>
             </ul>
         </nav>
@@ -36,8 +53,9 @@
             </form>
         </div>
     </header>
-
     <main class="content">
+        {% include 'fragments/messages.html' %}
+
         {% block content %}{% endblock content %}
     </main>
 </body>

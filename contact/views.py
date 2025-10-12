@@ -1,4 +1,9 @@
 from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth import logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpRequest
@@ -11,7 +16,8 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 
-from contact.forms import ContactForm
+from contact.forms import ContactForm, UserForm
+from contact.forms import UserRegisterForm
 from contact.models import Contact
 
 
@@ -27,7 +33,7 @@ class ContactCreate(TemplateView):
         return render(request, self.template_name, context)
 
     def post(self, request: HttpRequest) -> HttpResponse:
-        form = ContactForm(data=request.POST)
+        form = ContactForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
             contact = Contact.objects.create(**form.cleaned_data)
@@ -83,10 +89,12 @@ class ContactUpdate(TemplateView):
             messages.error(request, f'Contato de ID <b>{pk}</b> não existe. Tente novamente.')
             return redirect('contact:contacts')
 
-        form = ContactForm(data=request.POST, instance=contact)
+        form = ContactForm(data=request.POST, files=request.FILES, instance=contact)
 
         if form.is_valid():
             form.save()
+
+            messages.success(request, 'Usuário atualizado com sucesso.')
 
             return redirect('contact:update', pk=pk)
 
@@ -138,3 +146,85 @@ class Contacts(TemplateView):
         context = {'page_obj': page_obj, 'title': 'Contatos'}
 
         return render(request, self.template_name, context)
+
+
+class UserRegister(TemplateView):
+    template_name = 'register.html'
+
+    def get(
+        self, request: HttpRequest
+    ) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
+        return render(request, self.template_name, {'form': UserRegisterForm()})
+
+    def post(
+        self, request: HttpRequest
+    ) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
+        form = UserRegisterForm(data=request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, f'Bem vindo, {form.cleaned_data['first_name']}!')
+
+            return redirect('user-login')
+
+        return render(request, self.template_name, {'form': form})
+
+
+class UserUpdate(TemplateView):
+    template_name = 'user-update-form.html'
+
+    def get(self, request: HttpRequest, pk: int) -> HttpResponse:
+        user = User.objects.get(pk=pk)
+
+        form = UserForm(instance=user)
+
+        context = {'form': form, 'user': user}
+
+        return render(request, self.template_name, context)
+
+    def post(self, request: HttpRequest, pk: int) -> HttpResponse:
+        user = User.objects.get(pk=pk)
+
+        form = UserForm(data=request.POST, instance=user)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, 'Usuário atualizado com sucesso!')
+
+            return redirect('user-update', pk=pk)
+
+        return render(request, self.template_name, {'form': form})
+
+
+class Login(LoginView):
+    template_name = 'login.html'
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        form = AuthenticationForm(request)
+
+        return render(request, self.template_name, {'form': form})
+
+    def post(
+        self, request: HttpRequest
+    ) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
+        form = AuthenticationForm(request, data=request.POST)
+
+        if not form.is_valid():
+            return render(request, self.template_name, {'form': form})
+
+        user = form.get_user()
+
+        login(request, user)
+
+        messages.success(request, 'Usuário logado com sucesso.')
+
+        return redirect('contact:contacts')
+
+
+class Logout(View):
+    def get(self, request: HttpRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+        logout(request)
+
+        return redirect('user-login')

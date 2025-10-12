@@ -61,3 +61,7 @@ class Contact(Model):
 
     def __str__(self) -> str:
         return f'{self.id} - {self.first_name} - {self.phone}'
+
+    @property
+    def full_name(self) -> str:
+        return f'{self.first_name} {self.last_name}'

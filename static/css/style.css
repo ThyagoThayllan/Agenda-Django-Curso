@@ -77,6 +77,20 @@ svg {
   filter: brightness(70%);
 }
 
+.header-profile-link {
+  background-color: white;
+  border: 2px solid var(--link-dark-color);
+  border-radius: 0.5rem;
+  color: var(--link-dark-color);
+  padding: 0.5rem;
+  transition: all 0.2s;
+}
+
+.header-profile-link:hover {
+  background-color: var(--link-dark-color);
+  color: white;
+}
+
 .menu {
   margin: var(--spacing);
 }

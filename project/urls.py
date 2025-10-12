@@ -21,9 +21,21 @@ from django.contrib import admin
 from django.urls import include
 from django.urls import path
 
+from contact.views import Login
+from contact.views import Logout
+from contact.views import UserRegister
+from contact.views import UserUpdate
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('contact.urls')),
+
+    # User
+    path('user/create/', UserRegister.as_view(), name='user-register'),
+    path('user/<int:pk>/update/', UserUpdate.as_view(), name='user-update'),
+    path('login/', Login.as_view(), name='user-login'),
+    path('logout/', Logout.as_view(), name='user-logout'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

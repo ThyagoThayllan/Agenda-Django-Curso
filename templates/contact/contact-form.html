@@ -55,12 +55,19 @@
                     {{ form.description.errors }}
                 </div>
             </div>
-            <div class="form-content">
-                <div class="form-group">
+            <div class="form-content" style="display: flex; gap: 1rem;">
+                <div class="form-group" style="width: 100%;">
                     {{ form.image.label_tag }}
                     {{ form.image }}
                     {{ form.image.errors }}
                 </div>
+                {% if form.image.value %}
+                    <img
+                        alt="Foto do Contato"
+                        src="{{ form.image.value.url }}"
+                        style="height: 150px; width: auto; border: 2px solid #000; border-radius: 0.5rem"
+                    >
+                {% endif %}
             </div>
             <div class="form-content">
                 <div class="form-group">

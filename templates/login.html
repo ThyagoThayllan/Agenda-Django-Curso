@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+
+    <div class="form-wrapper">
+
+        <h2>Login User</h2>
+
+        <form
+            method="POST"
+        >
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-content">
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        <div style="color: red;">{{ form.non_field_errors }}</div>
+                        <div style="color: red;">{{ field.errors }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="form-content">
+                <div class="form-group">
+                    <button class="btn" type="submit">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

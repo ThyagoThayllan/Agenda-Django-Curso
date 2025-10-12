@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 DJANGO_BASE_DIR = Path(__file__).parent.parent
-NUMBER_OF_OBJECTS_TO_CREATE = 250
+NUMBER_OF_OBJECTS_TO_CREATE = 50
 
 sys.path.append(str(DJANGO_BASE_DIR))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'project.settings'

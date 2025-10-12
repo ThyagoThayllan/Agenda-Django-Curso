@@ -9,6 +9,16 @@
             <a href="{% url 'contact:contacts' %}">Voltar para a página de inicial</a>
         </div>
 
+        <img
+            alt="Foto de {{ contact.full_name }}"
+            {% if contact.image %}
+                src="{{ contact.image.url }}"
+            {% else %}
+                src="{{ MEDIA_URL }}images/default-user-image.png"
+            {% endif %}
+            style="width: 100px; height: auto; border-radius: 0.5rem;"
+        >
+
         <p><b>ID:</b> {{ contact.id }}</p>
         <p><b>N. Telefone:</b> {{ contact.phone }}</p>
         <p><b>E-mail:</b> {{ contact.email }}</p>
